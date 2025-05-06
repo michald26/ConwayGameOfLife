@@ -9,16 +9,16 @@ using namespace std;
 class GameOfLife {
 public:
 
-    //Gra z pusta plansza na start
+    //Gra z pustą planszą na start
     void graj() {
 
-        //Generowanie okienka z plansza
+        //Generowanie okienka z planszą
         sf::RenderWindow window(
         sf::VideoMode({750, 750}), "Game of Life (p - play/pause, l - losuj, r - reset, up - szybciej, down - wolniej)",
         sf::Style::Default, sf::State::Windowed,
         sf::ContextSettings{.antiAliasingLevel = 8});
 
-        //Domyslne wartosci zmiennych (mozna rozszerzyc funkcje o wybor wymiarow planszy)
+        //Domyślne wartości zmiennych (można rozszerzyć funkcję o wybór wymiarów planszy)
         kol = 50;
         wiersz = 50;
         predkosc = 500;
@@ -39,36 +39,36 @@ public:
                         czyPauza = !czyPauza;
                     if (key->code == sf::Keyboard::Key::Escape)
                         window.close();
-                    //Zwiekszanie/zmniejszanie odstepu miedzy turami w ms (min. 100ms)
+                    //Zwiększanie/zmniejszanie odstępu między turami w ms (min. 100ms)
                     if (key->code == sf::Keyboard::Key::Up)
                         if (predkosc>=150) predkosc -=50;
                     if (key->code == sf::Keyboard::Key::Down)
                         predkosc +=50;
-                    //czynnosci wykonywane tylko w trakcie pauzy
+                    //Czynności wykonywane tylko w trakcie pauzy
                     else if (key->code == sf::Keyboard::Key::L && czyPauza)
                         Losuj(); //Losowe wypelnienie planszy
                     else if (key->code == sf::Keyboard::Key::R && czyPauza)
                         plansza.assign(wiersz, vector<bool>(kol, false)); //Wyczyszczenie planszy
                 }
-                //Zmiana stanu klocka po wcisnieciu przycisku myszy
+                //Zmiana stanu klocka po wciśnięciu przycisku myszy
                 else if (auto* mb = event->getIf<sf::Event::MouseButtonPressed>()) {
                     if (mb->button == sf::Mouse::Button::Left && czyPauza) {
-                        sf::Vector2i pos = sf::Mouse::getPosition(window); //Lokalizacja klikniecia
-                        //Znalezienie odpowiadajacego kwadracika i zmiana jego stanu (przy zalozeniu szerokosci kwadracika = 15)
+                        sf::Vector2i pos = sf::Mouse::getPosition(window); //Lokalizacja kliknięcia
+                        //Znalezienie odpowiadąjacego kwadracika i zmiana jego stanu (przy założeniu szerokości kwadracika = 15px)
                         int i = pos.y / 15, j = pos.x / 15;
                         if (i >= 0 && i < kol && j >= 0 && j < wiersz)
                             plansza[i][j] = !plansza[i][j];
                     }
                 }
             }
-            NastPlansza(); //Wczytanie ulozenia w nastepnej turze
+            NastPlansza(); //Wczytanie ułożenia w następnej turze
 
-            if (!czyPauza) iteruj(); //Jesli gra nie jest zapauzowana to przejscie do nastepnej tury
+            if (!czyPauza) iteruj(); //Jeśli gra nie jest zapauzowana to przejście do nastepnej tury
 
             drukuj(plansza, window);
         }
     }
-    //Gra z wlasna plansza 50x50
+    //Gra z własną planszą 50x50
     void graj(vector<vector<bool>>& _plansza) {
         plansza = _plansza;
 
@@ -78,13 +78,13 @@ public:
             return;
         }
 
-        //Generowanie okienka z plansza
+        //Generowanie okienka z planszą
         sf::RenderWindow window(
         sf::VideoMode({750, 750}), "Game of Life (p - play/pause, l - losuj, r - reset, up - szybciej, down - wolniej)",
         sf::Style::Default, sf::State::Windowed,
         sf::ContextSettings{.antiAliasingLevel = 8});
 
-        //Domyslne wartosci zmiennych
+        //Domyślne wartości zmiennych
         kol = plansza.size();
         wiersz = plansza[0].size();
         predkosc = 500;
@@ -103,34 +103,58 @@ public:
                         czyPauza = !czyPauza;
                     if (key->code == sf::Keyboard::Key::Escape)
                         window.close();
-                    //Zwiekszanie/zmniejszanie odstepu miedzy turami w ms (min. 100ms)
+                    //Zwiększanie/zmniejszanie odstępu między turami w ms (min. 100ms)
                     if (key->code == sf::Keyboard::Key::Up)
                         if (predkosc>=150) predkosc -=50;
                     if (key->code == sf::Keyboard::Key::Down)
                         predkosc +=50;
-                    //czynnosci wykonywane tylko w trakcie pauzy
+                    //Czynnosci wykonywane tylko w trakcie pauzy
                     else if (key->code == sf::Keyboard::Key::L && czyPauza)
-                        Losuj(); //Losowe wypelnienie planszy
+                        Losuj(); //Losowe wypełnienie planszy
                     else if (key->code == sf::Keyboard::Key::R && czyPauza)
                         plansza.assign(wiersz, vector<bool>(kol, false)); //Wyczyszczenie planszy
                 }
-                //Zmiana stanu klocka po wcisnieciu przycisku myszy
+                //Zmiana stanu klocka po wciśnięciu przycisku myszy
                 else if (auto* mb = event->getIf<sf::Event::MouseButtonPressed>()) {
                     if (mb->button == sf::Mouse::Button::Left && czyPauza) {
-                        sf::Vector2i pos = sf::Mouse::getPosition(window); //Lokalizacja klikniecia
-                        //Znalezienie odpowiadajacego kwadracika i zmiana jego stanu (przy zalozeniu szerokosci kwadracika = 15)
+                        sf::Vector2i pos = sf::Mouse::getPosition(window); //Lokalizacja kliknięcia
+                        //Znalezienie odpowiadającego kwadracika i zmiana jego stanu (przy założeniu szerokści kwadracika = 15px)
                         int i = pos.y / 15, j = pos.x / 15;
                         if (i >= 0 && i < kol && j >= 0 && j < wiersz)
                             plansza[i][j] = !plansza[i][j];
                     }
                 }
             }
-            NastPlansza(); //Wczytanie ulozenia w nastepnej turze
+            NastPlansza(); //Wczytanie ułożenia w nasępnej turze
 
-            if (!czyPauza) iteruj(); //Jesli gra nie jest zapauzowana to przejscie do nastepnej tury
+            if (!czyPauza) iteruj(); //Jeśli gra nie jest zapauzowana to przejście do następnej tury
 
             drukuj(plansza, window);
         }
+    }
+
+    //Monte Carlo - funkcja zwraca udział żywych komórek na planszy
+    //po n symulacjach losowych gier z określoną liczbą tur
+    double MonteCarlo(int tury, int n){
+        double wynik = 0.0;
+        wiersz = 50;
+        kol = 50;
+        for (int i = 0; i < n; i++) {
+            plansza.assign(wiersz, vector<bool>(kol, false)); //pusta plansza
+            Losuj(); //wylosowanie poczatkowego stanu planszy
+            int suma = 0;
+            //Iterowanie do zadeklarowanej tury
+            for (int j=0; j<tury; j++) {
+                NastPlansza();
+                iteruj();
+            }
+            //Policzenie żywych komórek na finalnej planszy
+            for (int k = 0; k < wiersz; k++)
+                for (int l = 0; l < kol; l++)
+                    suma+=plansza[k][l]; //Zliczenie żywych komórek (True równoważne z 1)
+            wynik+=suma; //Dodanie do ostatecznego wyniku
+        }
+        return wynik/(n*kol*wiersz);
     }
 
 private:
@@ -142,23 +166,23 @@ private:
     vector<vector<bool>> nastplansza;
     vector<vector<sf::RectangleShape>> widok;
 
-    //przekonwertowanie planszy booleanskiej do SFML i jej wydrukowanie
+    //Przekonwertowanie planszy booleańskiej do SFML i jej wydrukowanie
     void drukuj(vector<vector<bool>>& _plansza, sf::RenderWindow& window) {
-        widok.assign(wiersz, vector<sf::RectangleShape>(kol)); //stworzenie macierzy z kwadracikami
+        widok.assign(wiersz, vector<sf::RectangleShape>(kol)); //Stworzenie macierzy z kwadracikami
         for (int i = 0; i < wiersz; i++) {
             for (int j = 0; j < kol; j++) {
-                //wlasciwosci kwadracika - czarna, cienka obwodka i wymiary 15x15
+                //Własciwości kwadracika - czarna, cienka obwódka i wymiary 15x15
                 widok[i][j] = sf::RectangleShape({15.f, 15.f});
                 widok[i][j].setOutlineThickness(1);
                 widok[i][j].setOutlineColor(sf::Color::Black);
                 widok[i][j].setPosition({float(j*15), float(i*15)});
-                //Wczytanie koloru w zaleznosci od stanu na planszy booleanskiej
+                //Wczytanie koloru w zależności od stanu na planszy booleańskiej
                 widok[i][j].setFillColor(_plansza[i][j] ? sf::Color::Black
                                                         : sf::Color::White);
-                window.draw(widok[i][j]); //zapisanie ksztaltow w pamieci
+                window.draw(widok[i][j]); //Zapisanie kształtów w pamięci
             }
         }
-        window.display(); //wydrukowanie wszystkich ksztaltow z pamieci
+        window.display(); //Wydrukowanie wszystkich kształtów z pamięci
     }
 
     //Ustawienie losowej planszy
@@ -171,22 +195,26 @@ private:
 
     //Sprawdzenie czy komórka przeżyje/umrze/narodzi się
     bool NastStan(vector<vector<bool>>& plansza, int _wiersz, int _kol) {
-        int suma = 0; //Liczba sasiadow
-        for (int poziom = _wiersz-1; poziom <=_wiersz+1; poziom++) {
-            if(poziom<0 || poziom>=wiersz) continue; //sprawdzenie granic planszy
-
-            for (int pion = _kol-1; pion<=_kol+1; pion++) {
-                if(pion<0 || pion>=kol || (poziom==_wiersz && pion==_kol)) continue; //sprawdzenie granic planszy i czy sasiad nie jest sprawdzanym klockiem
-                if(plansza[poziom][pion]) suma++;
+        int suma = 0; //Liczba żywych sąsiadów
+        for (int poziom = _wiersz - 1; poziom <= _wiersz + 1; poziom++) {
+            for (int pion = _kol - 1; pion <= _kol + 1; pion++) {
+                //Pominięcie sprawdzanej komórki
+                if (poziom == _wiersz && pion == _kol) continue;
+                //Nałożenie modulo na indeksy utworzy toroidalną planszę
+                //Dodanie do indeksu wymiaru rozwiąże problem z ujemnymi indeksami (lewa i górna krawędź)
+                int i = (poziom + wiersz) % wiersz;
+                int j = (pion  + kol) % kol;
+                if (plansza[i][j]) suma++;
             }
         }
-        //Dla zywych komorek
+
+        //Dla żywych komórek
         if (plansza[_wiersz][_kol]) {
             if (suma == 2 || suma == 3) return true; //Jeśli żywa komórka ma 2 lub 3 sąsiadów to przeżywa
             return false; //Jeśli ma <2 lub >3 sąsiadów to umiera
         }
-        //Dla martwych komorek
-        if (suma==3) return true; //Jeśli martwa komórka ma 3 sąsiądów to się narodzi
+        //Dla martwych komórek
+        if (suma==3) return true; //Jeśli martwa komórka ma 3 sąsiadów to się narodzi
         return false;
     }
 
@@ -206,7 +234,7 @@ private:
     }
 };
 
-//wygenerowanie planszy 50 x50 z gliderem
+//Wygenerowanie planszy 50 x50 z gliderem
 vector<vector<bool>> glider() {
     vector<vector<bool>> plansza (50, vector<bool>(50, false));
     plansza[1][0] = true;
@@ -216,7 +244,8 @@ vector<vector<bool>> glider() {
     plansza[2][2] = true;
     return plansza;
 }
-//wygenerowanie planszy 50x50 z pulsarem
+
+//Wygenerowanie planszy 50x50 z pulsarem
 vector<vector<bool>> pulsar() {
     vector<vector<bool>> plansza (50, vector<bool>(50, false));
     vector<int> iter1 = {21, 22, 23, 27, 28, 29};
@@ -234,10 +263,20 @@ vector<vector<bool>> pulsar() {
 int main(){
     GameOfLife gra;
 
-    //gra.graj(); //gra z pusta plansza
+    //gra.graj(); //Gra z pustą planszą
 
-    //vector<vector<bool>> plansza = glider(); //wygenerowanie planszy z gliderem
-    vector<vector<bool>> plansza = pulsar(); // wygenerowanie planszy z pulsarem
-    gra.graj(plansza); //gra z wlasna plansza
+    //vector<vector<bool>> plansza = glider(); //Wygenerowanie planszy z gliderem
+    //vector<vector<bool>> plansza = pulsar(); //Wygenerowanie planszy z pulsarem
+    //gra.graj(plansza); //Gra z własną planszą
+
+    //Monte Carlo
+    vector<int> tury = {1, 10, 50, 100, 500, 1000};
+    vector<int> n = {1, 10, 100, 1000, 10000, 100000, 1000000};
+
+    for (int i = 0; i < tury.size(); i++)
+        for (int j = 0; j < n.size(); j++)
+            cout << "tury = " << tury[i] << ", n = " << n[j] << ", udzial zywych: " <<
+                100*gra.MonteCarlo(tury[i], n[j]) << "%" << endl;
+
     return 0;
 }
