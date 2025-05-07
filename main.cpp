@@ -9,6 +9,14 @@ using namespace std;
 class GameOfLife {
 public:
 
+    //Konstruktor
+
+    GameOfLife(): kol(50), wiersz(50), predkosc(500), czyPauza(true),
+                  plansza(50, vector<bool>(50, false)),
+                  nastplansza(50, vector<bool>(50, false)),
+                  widok(50, vector<sf::RectangleShape>(50)),
+                  gen(random_device{}()){}
+
     //Gra z pustą planszą na start
     void graj() {
 
@@ -54,9 +62,9 @@ public:
                 else if (auto* mb = event->getIf<sf::Event::MouseButtonPressed>()) {
                     if (mb->button == sf::Mouse::Button::Left && czyPauza) {
                         sf::Vector2i pos = sf::Mouse::getPosition(window); //Lokalizacja kliknięcia
-                        //Znalezienie odpowiadąjacego kwadracika i zmiana jego stanu (przy założeniu szerokości kwadracika = 15px)
+                        //Znalezienie odpowiadającego kwadracika i zmiana jego stanu (przy założeniu szerokści kwadracika = 15px)
                         int i = pos.y / 15, j = pos.x / 15;
-                        if (i >= 0 && i < kol && j >= 0 && j < wiersz)
+                        if (i >= 0 && i < wiersz && j >= 0 && j < kol)
                             plansza[i][j] = !plansza[i][j];
                     }
                 }
@@ -120,7 +128,7 @@ public:
                         sf::Vector2i pos = sf::Mouse::getPosition(window); //Lokalizacja kliknięcia
                         //Znalezienie odpowiadającego kwadracika i zmiana jego stanu (przy założeniu szerokści kwadracika = 15px)
                         int i = pos.y / 15, j = pos.x / 15;
-                        if (i >= 0 && i < kol && j >= 0 && j < wiersz)
+                        if (i >= 0 && i < wiersz && j >= 0 && j < kol)
                             plansza[i][j] = !plansza[i][j];
                     }
                 }
@@ -135,13 +143,14 @@ public:
 
     //Monte Carlo - funkcja zwraca udział żywych komórek na planszy
     //po n symulacjach losowych gier z określoną liczbą tur
-    double MonteCarlo(int tury, int n){
+    double MonteCarlo(int tury, int n, int seed){
+        mt19937 generator(seed);
         double wynik = 0.0;
         wiersz = 50;
         kol = 50;
         for (int i = 0; i < n; i++) {
             plansza.assign(wiersz, vector<bool>(kol, false)); //pusta plansza
-            Losuj(); //wylosowanie poczatkowego stanu planszy
+            Losuj(generator); //wylosowanie poczatkowego stanu planszy
             int suma = 0;
             //Iterowanie do zadeklarowanej tury
             for (int j=0; j<tury; j++) {
@@ -162,6 +171,8 @@ private:
     int wiersz;
     int predkosc;
     bool czyPauza;
+    mt19937 gen;
+    uniform_int_distribution<int> dist{0, 1};
     vector<vector<bool>> plansza;
     vector<vector<bool>> nastplansza;
     vector<vector<sf::RectangleShape>> widok;
@@ -187,10 +198,17 @@ private:
 
     //Ustawienie losowej planszy
     void Losuj() {
-        srand(time(nullptr)); //wygenerowanie losowego seedu
         for (int i = 0; i < wiersz; i++)
             for (int j = 0; j < kol; j++)
-                plansza[i][j] = rand() % 2; //wylosowanie wartosci 0-1
+                plansza[i][j] = dist(gen);
+    }
+
+    //Ustawienie losowej planszy z ziarnem (do Monte Carlo)
+    void Losuj(mt19937& generator) {
+        for (int i = 0; i < wiersz; i++)
+            for (int j = 0; j < kol; j++)
+                plansza[i][j] = dist(generator);
+        //plansza[i][j] = rand() % 2; //wylosowanie wartosci 0-1
     }
 
     //Sprawdzenie czy komórka przeżyje/umrze/narodzi się
@@ -265,18 +283,20 @@ int main(){
 
     //gra.graj(); //Gra z pustą planszą
 
-    //vector<vector<bool>> plansza = glider(); //Wygenerowanie planszy z gliderem
+    vector<vector<bool>> plansza = glider(); //Wygenerowanie planszy z gliderem
     //vector<vector<bool>> plansza = pulsar(); //Wygenerowanie planszy z pulsarem
-    //gra.graj(plansza); //Gra z własną planszą
+    gra.graj(plansza); //Gra z własną planszą
 
+    /*
     //Monte Carlo
-    vector<int> tury = {1, 10, 50, 100, 500, 1000};
-    vector<int> n = {1, 10, 100, 1000, 10000, 100000, 1000000};
+    vector<int> tury = {1, 10, 50, 100, 250, 500, 1000};
+    vector<int> n = {1, 10, 50, 100, 250, 500, 1000};
 
     for (int i = 0; i < tury.size(); i++)
         for (int j = 0; j < n.size(); j++)
             cout << "tury = " << tury[i] << ", n = " << n[j] << ", udzial zywych: " <<
-                100*gra.MonteCarlo(tury[i], n[j]) << "%" << endl;
+                100*gra.MonteCarlo(tury[i], n[j], 1234) << "%" << endl;
+    */
 
     return 0;
 }
